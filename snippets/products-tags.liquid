@@ -1,0 +1,19 @@
+<style>
+  .custom_tags{
+    margin-block:.6em !important;
+  }
+  .product__tags-custom{
+    display:inline-block;
+    margin:0;
+    background:{{block.settings.tag_clr}};
+    color:{{block.settings.tag_text}};
+    padding:3px 5px;
+    font-weight:bold;
+    letter-spacing:1.6px;
+  }
+</style>
+<div class="custom_tags">
+  {% for tags in product.tags %}
+    <h5 class="product__tags-custom">{{ tags }}</h5>
+  {% endfor %}
+</div>

@@ -1,0 +1,257 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  .custom__btn_wrapper button{
+   font-family:var(--font-heading-family) !important;
+    font-weight:600;
+  }
+  [role="tablist"]{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 3em;
+    font-weight:bold;
+    margin-bottom:.4em;
+    overflow:auto;
+    padding:10px;
+  }
+  .tab-label {
+    border:0;
+    background:transparent;
+    position:relative;
+    cursor: pointer;
+    font-size:16px;
+    font-weight:500;
+    border-radius: 4px;
+     word-wrap: normal;
+   text-transform:uppercase;
+    text-wrap:nowrap;
+    padding:10px 12px;
+  }
+  .tab-label:hover{
+    color:rgb(var(--color-foreground));
+  }
+  .tab-label[aria-selected="true"] {
+    color:{{section.settings.label_color}} !important;
+    /* border-bottom: 1px solid rgb(var(--color-foreground)); */
+    background-color:{{section.settings.label_bg}};
+
+    text-underline-offset:15px;
+    border-radius:0;
+  }
+  .tab-content {
+    display: none;
+    padding: 20px;
+    line-height:3em;
+     border: 1px solid #f3f3f3;
+  }
+  .tab-content.active {
+    display: block;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+
+    [role="tabpanel"]{
+      margin:10px;
+    }
+  }
+
+  @media (max-width:425px){
+   [role="tablist"]{
+      padding-inline:2px;
+     gap:1em;
+    }
+  .tab-label {
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:bold;
+  }
+  .tab-content{
+    padding:10px;
+    line-height:2.5em;
+  }
+  }
+{%- endstyle -%}
+
+{% assign details = product.metafields.custom.product_details | metafield_tag %}
+<div class="section-{{ section.id }}-padding page-width">
+  <div class=" ">
+    <div role="tablist" aria-label="Product Information Tabs" class="custom__btn_wrapper">
+      {% if section.settings.desc != blank %}
+        <button id="tab1" role="tab" aria-controls="content1" aria-selected="true" class="tab-label">
+          {{ section.settings.desc }}
+        </button>
+      {% endif %}
+      {% if section.settings.product_shipping != blank %}
+        {% if section.settings.shipping != blank %}
+          <button id="tab2" role="tab" aria-controls="content2" aria-selected="false" class="tab-label">
+            {{ section.settings.shipping }}
+          </button>
+        {% endif %}
+      {% endif %}
+      {% if section.settings.product_return != blank %}
+        {% if section.settings.return != blank %}
+          <button id="tab3" role="tab" aria-controls="content3" aria-selected="false" class="tab-label">
+            {{ section.settings.return }}
+          </button>
+        {% endif %}
+      {% endif %}
+      {% if section.settings.reviews != blank %}
+        {% if section.settings.reviews != blank %}
+          <button id="tab4" role="tab" aria-controls="content4" aria-selected="false" class="tab-label">
+            {{ section.settings.reviews }}
+          </button>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="">
+      <div id="content1" role="tabpanel" aria-labelledby="tab1" class="tab-content active">
+        {% if product.description != blank %}
+          {{ product.description }}
+        {% else %}
+          {% assign collection = product.collections[0] %}
+          {% if collection.title != blank %}
+            <a href="{{ collection.url }}" class="product_collection">
+              {{ collection.title }}
+            </a>
+          {% endif %}
+          {% if product.title != blank %}
+            <h3 class="product__title">{{ product.title }}</h3>
+          {% endif %}
+        {% endif %}
+      </div>
+      {% if section.settings.product_shipping != blank %}
+        <div id="content2" role="tabpanel" aria-labelledby="tab2" class="tab-content">
+          {{ section.settings.product_shipping }}
+        </div>
+      {% endif %}
+      {% if section.settings.product_return != blank %}
+        <div id="content3" role="tabpanel" aria-labelledby="tab3" class="tab-content">
+          {{ section.settings.product_return }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.enable_reviews %}
+        <div id="content4" role="tabpanel" aria-labelledby="tab4" class="tab-content">
+          <div style="clear:both"></div>
+          <div id="judgeme_product_reviews" class="jdgm-widget jdgm-review-widget" data-id="{{ product.id }}">
+            {{ product.metafields.judgeme.widget }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('[role="tab"]');
+  const tabContents = document.querySelectorAll('[role="tabpanel"]');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
+      tabContents.forEach(content => content.classList.remove('active'));
+      tab.setAttribute('aria-selected', 'true');
+      const content = document.getElementById(tab.getAttribute('aria-controls'));
+      content.classList.add('active');
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Tabs",
+  "settings": [
+        {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
+    },
+    {
+      "type": "color",
+      "id": "label_bg",
+      "label": "Button",
+      "default":"#121212"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Button Title",
+      "default":"#fff"
+    },
+    {
+      "type": "color",
+      "id": "text_clr",
+      "label": "Text Color",
+      "default":"#fff"
+    },
+        {
+      "type": "text",
+      "id": "desc",
+      "label": "Description",
+      "default":"Description"
+    },
+    {
+      "type": "text",
+      "id": "shipping",
+      "label": "Shipping",
+      "default":"Shipping"
+    },
+    {
+      "type": "richtext",
+      "id": "product_shipping",
+      "label": "Shipping"
+    },
+        {
+      "type": "text",
+      "id": "return",
+      "label": "Return",
+      "default":"Return"
+    },
+        {
+      "type": "textarea",
+      "id": "product_return",
+      "label": "Return"
+    },
+        {
+      "type": "text",
+      "id": "reviews",
+      "label": "Reviwes",
+      "default":"Customer Reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reviews",
+      "label": "Enable Reviews",
+      "default":false
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Product Tabs"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,38 @@
+<style>
+  .offer-{{ section.id }}{
+    background:{{block.settings.offer_bg}};
+    padding:20px;
+    display:flex;
+    align-items:center;
+    gap:.4em;
+    justify-content:center;
+    flex-direction:column;
+  }
+  .offer-{{section.id}} .icon-picto-percent{
+    color:{{block.settings.svg_color}} !important;
+  }
+  .offer_details p{
+    margin:0 !important;
+    text-align:center;
+    font-size:14px;
+  }
+  .offer_title, .offer_details{
+       color:{{block.settings.text_color}};
+      font-size:14px;
+  }
+</style>
+{% if block.settings.offer_title != blank and block.settings.offer_details != blank %}
+  <div
+    class="offer-{{ section.id }}"
+  >
+    {% render 'icon-pecto-percent', block: block %}
+    {% if block.settings.offer_title != blank %}
+      <span class="font-body-bold offer_title ">{{ block.settings.offer_title }}</span>
+    {% endif %}
+    {% if block.settings.offer_details != blank %}
+      <div class="offer_details ">
+        <p>{{ block.settings.offer_details }}</p>
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
